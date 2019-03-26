@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>An empty page</title>
+
+    <script src="js/math.js"></script>
+    <script src="js/numpy-clone.js"></script>
+    <script src="js/FFT.js"></script>
+    <script src="js/script.js"></script>
+    
+
+    <style>
+
+    /*['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628']*/
+
+        .area {
+          fill: #e41a1c;
+        }
+
+        .line {
+          fill: none;
+          stroke: #e41a1c;
+          stroke-width: 1.5px;
+        }
+
+        .dot {
+          fill: white;
+          stroke: #e41a1c;
+          stroke-width: 1.5px;
+        }
+
+    </style>
+    
+
+</head>
+
+<body>
+
+</body>
+
+<!-- load the d3.js library -->    
+<script src="http://d3js.org/d3.v4.min.js"></script>
+
+<script>
+
+var xSize = math.size(generatedFFT.fftFreq._data)[0];
+
+var yMax = math.max(generatedFFT.fftMag._data);
+var xMax = math.max(generatedFFT.fftFreq._data);
+
+var data = d3.range(math.size(generatedFFT.fftFreq._data)).map(function(i) {
+  return {x: generatedFFT.fftFreq._data[i], y: generatedFFT.fftMag._data[i]};
+});
+
+var margin = {top: 40, right: 40, bottom: 40, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var x = d3.scaleLinear()
+    .domain([0,xMax])
+    .range([0, width]);
+
+var y = d3.scaleLinear()
+    .domain([0,yMax])
+    .range([height, 0]);
+
+var line = d3.line()
+    .defined(function(d) { return d; })
+    .x(function(d) { return x(d.x); })
+    .y(function(d) { return y(d.y); });
+
+var svg = d3.select("body").append("svg")
+    .datum(data)
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + 2 * margin.left + "," + margin.top + ")");
+
+svg.append("text")      // text label for the x axis
+    .attr("x", width / 2 )
+    .attr("y", height + margin.bottom)
+    .style("text-anchor", "middle")
+    .text("Date");
+
+svg.append("text")
+        .attr("transform", "rotate(-90)")
+        .attr("y", - 1.5 * margin.left)
+        .attr("x", -(height / 2))
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
+        .text("Value");
+
+svg.append("g")
+    .attr("class", "axis axis--x")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+svg.append("g")
+    .attr("class", "axis axis--y")
+    .call(d3.axisLeft(y));
+
+svg.append("path")
+    .attr("class", "line")
+    .attr("d", line);
+
+// svg.selectAll(".dot")
+//   .data(data.filter(function(d) { return d; }))
+//   .enter().append("circle")
+//     .attr("class", "dot")
+//     .attr("cx", line.x())
+//     .attr("cy", line.y())
+//     .attr("r", 3.5);
+
+
+</script>
+
+</html>
